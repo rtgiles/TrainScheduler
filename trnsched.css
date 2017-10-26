@@ -1,0 +1,21 @@
+.body{
+	width: 980px;
+}
+
+.jumbotron{
+	background-image: url(20110530_Metra.jpg);
+}
+
+.panel{
+	margin-bottom: 10px;
+	border-style: double;
+	border-radius: 5px;
+}
+
+h5{
+	background-color: blue;
+	color: white;
+}
+ .clock{
+ 	float: right;
+ }
