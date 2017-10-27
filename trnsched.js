@@ -20,7 +20,7 @@
     var trnFstTme="";
     var trnFreq="";
     var tmeRemndr="";
-    var trnNxtArvl2 ="";
+    
    
 //Clock function
 
@@ -39,62 +39,25 @@
 	  	event.preventDefault();
 	  	var trnName= $("#trnName").val().trim();
 	  	var trnDest= $("#trnDest").val().trim();
-	  	var trnFstTme= $("#trnFstTme").val().trim();
+	  	var trnFrstTme= $("#trnFstTme").val().trim();
 		var trnFreq= $("#trnFreq").val().trim();
 	  	
 
 	  	console.log(trnName);
 	  	console.log(trnDest);
-	  	console.log(trnFstTme);
+	  	console.log(trnFrstTme);
 	  	console.log(trnFreq);
 	  	
-	  	var trnTmeCnvrt= moment(trnFstTme, "HH:mm");
-		  	console.log("trnTmeCnvrt " + trnTmeCnvrt);
-
-		  	var diffTme= moment().diff(moment(trnFstTme, "HH:mm"));
-		  	console.log("diffTme " + diffTme);
-
-		  	var tmeRemndr= moment().diff(moment(trnFstTme, "HH:mm"),"minutes") % trnFreq;
-		  	console.log("tmeRemndr " + tmeRemndr);
-		  	var tmeRemndr2= moment(tmeRemndr).format("HH:mm");
-		  	console.log("tmeRemndr2 " + tmeRemndr2);
-
-		  	var trnMinutes= trnFreq - tmeRemndr;
-		  	var trnMinutes2= moment(trnMinutes).format("hh:mm");
-		  	console.log("trnMinutes2 " + trnMinutes2);
-		  	
-		  	
-		  	var trnFreq2= moment(trnFreq).format("hh:mm");
-		//};
-		database.ref().push({
-		  		trnName: trnName,
-				trnDest: trnDest,
-				trnFstTme: trnFstTme,
-				trnFreq2: trnFreq2,
-				tmeRemndr2: tmeRemndr2,
-				trnMinutes2: trnMinutes2,
-		  		dateAdded: firebase.database.ServerValue.TIMESTAMP
-		  	});
-	  	//};
-
-	  	//time_calc();
-	  	//databasePush();
+  		database.ref().push({
+	  		trnName: trnName,
+			trnDest: trnDest,
+			trnFrstTme: trnFrstTme,
+			trnFreq: trnFreq,
+			dateAdded: firebase.database.ServerValue.TIMESTAMP
+	  	});
+	  	
 	  	return false;
   	});
-  	
-  	
-  	// Database push
-	  	function dataPush(){
-		  	database.ref().push({
-		  		trnName: trnName,
-				trnDest: trnDest,
-				trnFstTme: trnFstTme,
-				trnFreq2: trnFreq2,
-				tmeRemndr2: tmeRemndr2,
-				trnMinutes2: trnMinutes2,
-		  		dateAdded: firebase.database.ServerValue.TIMESTAMP
-		  	});
-	  	}
   	
   	//Retrieve Data from Firebase 
 	  	function dataRetrieve(){
@@ -105,25 +68,37 @@
 		      // Console.loging the last user's data
 		      console.log(sv.trnName);
 		      console.log(sv.trnDest);
-		      console.log(sv.trnFstTme);
-		      console.log(sv.tmeRemndr2);
-		      console.log(sv.trnMinutes2);
-
+		      console.log(sv.trnFrstTme);
+		      console.log(sv.trnFreq);
+		      
 		      tableLoad(sv);
 		  	});
 	  	}
 
      //HTML Form Fill-IN
 	    function tableLoad(sv){
-	     // for (var i = sv.length - 1; i >= 0; i--) {
-	      		//sv[i];
-	           $(".table").append([
+	     var frstTmeCnvt= moment(sv.trnFrstTme, "hh:mm").subtract(1, "years");
+	     	console.log(frstTmeCnvt);
+     	var crrntTme= moment();
+     		console.log("Current Time:   " + moment(crrntTme).format("hh:mm"));
+ 		var diffTme= moment().diff(moment(frstTmeCnvt),"minutes");
+ 			console.log("Difference in Time:  " + diffTme);
+		
+		var tmeRemndr= diffTme % sv.trnFreq;
+
+		var trnMinutesTill= sv.trnFreq - tmeRemndr;
+			console.log("Minutes till Train:  "+ trnMinutesTill);
+
+		var nxtTrn= moment().add(trnMinutesTill, "minutes").format("hh:mm");
+			console.log("Arrival Time:  "+ nxtTrn)/*moment(nxtTrn).format("hh:mm"))*/;
+
+	          $(".table").append([
 		  		"<tr>",
 		  			"<td class='trnName'>" + sv.trnName + "</td>",
 		  			"<td class='trnDstn'>" + sv.trnDest + "</td>",
-		  			"<td class='trnFrqy'>" + sv.trnFreq2 + "</td>",
-		  			"<td class='trnNxtArvl'>" + sv.trnMinutes2 + "</td>",
-		  			"<td class='trnMinAwy'>" + sv.tmeRemndr2 + "</td>",
+		  			"<td class='trnFrqy'>" + sv.trnFreq + "</td>",
+		  			"<td class='trnNxtArvl'>" + trnMinutesTill + "</td>",
+		  			"<td class='trnMinAwy'>" + nxtTrn + "</td>",
 		  		"</tr>"
 				]);
 	  		//}
